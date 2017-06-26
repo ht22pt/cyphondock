@@ -8,8 +8,8 @@ services:
 python:
   - 3.6
 
-# addons:
-#   sauce_connect: true
+addons:
+  sauce_connect: true
 
 before_script:
   - docker-compose -f docker-compose.travis.yml up --build -d
@@ -22,7 +22,7 @@ script:
   # Make sure starter fixtures can load successfully and all tests pass.
   # Run tests with --keepdb to avoid OperationalError during teardown, in case
   # any db connections are stillr open from threads in TransactionTestCases.
-  - docker exec cyphondock_cyphon_1 sed -ie 's/localhost/sc/' tests/functional_tests.py
+  - docker exec cyphondock_cyphon_1 sed -ie "s/localhost/$(route -n | egrep -o '172\.\d+\.0\.1')/" tests/functional_tests.py
   - docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json
   - docker exec -e FUNCTIONAL_TESTS_DRIVER=SAUCELABS -e SAUCE_USERNAME -e SAUCE_ACCESS_KEY -e TRAVIS_JOB_NUMBER -e TRAVIS_BUILD_NUMBER -e TRAVIS_PYTHON_VERSION -e TWITTER_ACCESS_TOKEN -e TWITTER_KEY -e TWITTER_SECRET -e TWITTER_TOKEN_SECRET cyphondock_cyphon_1 python manage.py test --noinput --keepdb -v 2
 
