@@ -16,16 +16,7 @@ before_script:
   - docker ps -a
   - sleep 30  # wait for PostgreSQl and Elasticsearch to start
 
-script:
-  - docker exec cyphondock_cyphon_1 rm -f __init__.py
-  - docker exec cyphondock_cyphon_1 python manage.py migrate contenttypes
-  # Make sure starter fixtures can load successfully and all tests pass.
-  # Run tests with --keepdb to avoid OperationalError during teardown, in case
-  # any db connections are stillr open from threads in TransactionTestCases.
-  - ip -4 addr show dev docker0
-  - docker exec cyphondock_cyphon_1 sed -ie "s/localhost/$(ip -4 addr show docker0 | grep -Po 'inet \K[\d\.]+')/" tests/functional_tests.py
-  - docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json
-  - docker exec -e FUNCTIONAL_TESTS_DRIVER=SAUCELABS -e SAUCE_USERNAME -e SAUCE_ACCESS_KEY -e TRAVIS_JOB_NUMBER -e TRAVIS_BUILD_NUMBER -e TRAVIS_PYTHON_VERSION -e TWITTER_ACCESS_TOKEN -e TWITTER_KEY -e TWITTER_SECRET -e TWITTER_TOKEN_SECRET cyphondock_cyphon_1 python manage.py test --noinput --keepdb -v 2
+script: ./scripts/runtests.sh
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
