@@ -23,7 +23,8 @@ script:
   # Run tests with --keepdb to avoid OperationalError during teardown, in case
   # any db connections are still open from threads in TransactionTestCases.
   - docker exec cyphondock_cyphon_1 sed -ie 's/localhost:4445/ondemand.saucelabs.com/' tests/functional_tests.py
-  - docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json && docker exec cyphondock_cyphon_1 python manage.py test --noinput --keepdb -v 2
+  - docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json
+  - docker exec cyphondock_cyphon_1 -e FUNCTIONAL_TESTS_DRIVER -e SAUCE_USERNAME -e SAUCE_ACCESS_KEY -e TWITTER_ACCESS_TOKEN -e TWITTER_KEY -e TWITTER_SECRET -e TWITTER_TOKEN_SECRET python manage.py test --noinput --keepdb -v 2
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
