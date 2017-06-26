@@ -50,6 +50,7 @@ services:
       - mongo
       - postgres
       - selenium
+      - sc
     depends_on:
       - elasticsearch
       - geoip
@@ -205,3 +206,13 @@ services:
 
   selenium:
     image: selenium/standalone-chrome:${SELENIUM_VER}
+
+  sc:
+    image: henrrich/docker-sauce-connect:latest
+    environment:
+      - SAUCE_USERNAME
+      - SAUCE_ACCESS_KEY
+      - TRAVIS_JOB_NUMBER
+    ports:
+      - "4445:4445"
+    command: "-u $SAUCE_USERNAME -k $SAUCE_ACCESS_KEY -i $TRAVIS_JOB_NUMBER"
