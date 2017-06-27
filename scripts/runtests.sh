@@ -8,7 +8,7 @@ docker exec cyphondock_cyphon_1 sed -ie "s/localhost/${bridge}/" tests/functiona
 # Make sure starter fixtures can load successfully and all tests pass.
 # Run tests with --keepdb to avoid OperationalError during teardown, in case
 # any db connections are stillr open from threads in TransactionTestCases.
-docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json
+docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json || true
 docker exec \
   -e FUNCTIONAL_TESTS_DRIVER=SAUCELABS \
   -e SAUCE_USERNAME \
