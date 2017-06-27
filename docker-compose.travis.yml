@@ -19,6 +19,7 @@ services:
     depends_on:
       - cyphon
       - rabbit
+    network_mode: bridge
 
   celeryworker:
     extends:
@@ -35,6 +36,7 @@ services:
     depends_on:
       - cyphon
       - rabbit
+    network_mode: bridge
 
   cyphon:
     extends:
@@ -57,6 +59,7 @@ services:
       - postgres
     volumes:
       - ./config-COPYME/cyphon/fixtures:/usr/src/app/cyphon/fixtures:ro
+    network_mode: bridge
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VER}
@@ -68,9 +71,11 @@ services:
       - ./config-COPYME/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./config-COPYME/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
       - ./config-COPYME/elasticsearch/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:ro
+    network_mode: bridge
 
   geoip:
     image: dunbar/geoip:${GEOIP_VER}
+    network_mode: bridge
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VER}
@@ -85,6 +90,7 @@ services:
       - elasticsearch
     volumes:
       - ./config-COPYME/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    network_mode: bridge
 
   logspout:
     image: gliderlabs/logspout:${LOGSPOUT_VER}
@@ -96,6 +102,7 @@ services:
       - logstash
     depends_on:
       - logstash
+    network_mode: bridge
 
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VER}
@@ -114,12 +121,14 @@ services:
     links:
       - elasticsearch
       - rabbit
+    network_mode: bridge
 
   mongo:
     image: mongo:${MONGODB_VER}
     restart: always
     env_file:
       - ./config-COPYME/env/cyphon.env
+    network_mode: bridge
 
   nginx:
     image: nginx:${NGINX_VER}
@@ -142,18 +151,21 @@ services:
     depends_on:
       - cyphon
       - selenium
+    network_mode: bridge
 
   rabbit:
     image: rabbitmq:${RABBITMQ_VER}
     restart: always
     env_file:
       - ./config-COPYME/env/cyphon.env
+    network_mode: bridge
 
   postgres:
     image: mdillon/postgis:${POSTGRES_VER}
     restart: always
     env_file:
       - ./config-COPYME/env/cyphon.env
+    network_mode: bridge
 
   logchutes:
     extends:
@@ -170,6 +182,7 @@ services:
     depends_on:
       - cyphon
       - rabbit
+    network_mode: bridge
 
   monitors:
     extends:
@@ -186,6 +199,7 @@ services:
     depends_on:
       - cyphon
       - rabbit
+    network_mode: bridge
 
   watchdogs:
     extends:
@@ -202,6 +216,8 @@ services:
     depends_on:
       - cyphon
       - rabbit
+    network_mode: bridge
 
   selenium:
     image: selenium/standalone-chrome:${SELENIUM_VER}
+    network_mode: bridge
