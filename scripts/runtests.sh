@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 docker exec cyphondock_cyphon_1 python manage.py migrate contenttypes || true
-bridge="$(docker exec cyphondock_cyphon_1 ip -4 addr show eth0 | grep -Po 'inet \K[\d\.]+')"
+bridge="$(docker exec cyphondock_cyphon_1 route -n | grep -Po '172\.\d+\.0\.1' | head -n1)"
 echo $bridge
 docker exec cyphondock_cyphon_1 route -n
 docker exec cyphondock_cyphon_1 sed -ie "s/localhost/${bridge}/" tests/functional_tests.py
