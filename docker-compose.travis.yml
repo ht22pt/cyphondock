@@ -166,6 +166,8 @@ services:
     env_file:
       - ./config-COPYME/env/cyphon.env
     network_mode: bridge
+    ports:
+      - "5432:5432"
 
   logchutes:
     extends:
