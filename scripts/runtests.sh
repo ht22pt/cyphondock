@@ -3,7 +3,6 @@ set -ev
 docker exec cyphondock_cyphon_1 python manage.py migrate contenttypes || true
 bridge="$(ip -4 addr show docker0 | grep -Po 'inet \K[\d\.]+')"
 echo $bridge
-docker exec cyphondock_cyphon_1 nc -zv cyphondock_cyphon_1 4445
 docker exec cyphondock_cyphon_1 route -n
 docker exec cyphondock_cyphon_1 sed -ie "s/localhost/${bridge}/" tests/functional_tests.py
 # Make sure starter fixtures can load successfully and all tests pass.
