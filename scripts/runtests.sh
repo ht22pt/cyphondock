@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ev
+netstat -4lnt
 docker exec cyphondock_cyphon_1 python manage.py migrate contenttypes || true
 bridge="$(docker exec cyphondock_cyphon_1 route -n | grep -Po '172\.\d+\.0\.1' | head -n1)"
 echo $bridge
