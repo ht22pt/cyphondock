@@ -6,6 +6,7 @@ bridge="$(docker exec cyphondock_cyphon_1 route -n | grep -Po '172\.\d+\.0\.1' |
 echo $bridge
 docker exec cyphondock_cyphon_1 route -n
 docker exec cyphondock_cyphon_1 sed -ie "s/localhost/${bridge}/" tests/functional_tests.py
+docker exec cyphondock_cyphon_1 grep "${bridge}" tests/functional_tests.py
 # Make sure starter fixtures can load successfully and all tests pass.
 # Run tests with --keepdb to avoid OperationalError during teardown, in case
 # any db connections are stillr open from threads in TransactionTestCases.
