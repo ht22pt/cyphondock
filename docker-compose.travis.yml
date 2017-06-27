@@ -223,3 +223,8 @@ services:
   selenium:
     image: selenium/standalone-chrome:${SELENIUM_VER}
     network_mode: bridge
+
+networks:
+  default:
+    external:
+      name: bridge
