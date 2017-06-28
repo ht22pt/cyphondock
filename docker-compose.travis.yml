@@ -65,7 +65,7 @@ services:
     volumes_from:
       - geoip
     links:
-      - saucelabs
+      # - saucelabs
       - elasticsearch
       - geoip
       - mongo
