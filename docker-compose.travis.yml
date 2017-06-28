@@ -52,7 +52,7 @@ services:
       service: cyphon-test
     environment:
       - CYPHON_SUPERUSER=YES
-      - FUNCTIONAL_TESTS_DRIVER
+      - FUNCTIONAL_TESTS_DRIVER=docker
       - SAUCE_USERNAME
       - SAUCE_ACCESS_KEY
       - TRAVIS_JOB_NUMBER

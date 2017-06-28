@@ -9,8 +9,8 @@ docker exec cyphondock_cyphon_1 python manage.py migrate contenttypes || true
 # docker-compose -f docker-compose.travis.yml stop cyphon
 # docker-compose -f docker-compose.travis.yml up -d cyphon
 # sleep 10
-docker exec cyphondock_cyphon_1 sed -ie "s/localhost/saucelabs/" tests/functional_tests.py
-docker exec cyphondock_cyphon_1 grep "saucelabs" tests/functional_tests.py
+# docker exec cyphondock_cyphon_1 sed -ie "s/localhost/saucelabs/" tests/functional_tests.py
+# docker exec cyphondock_cyphon_1 grep "saucelabs" tests/functional_tests.py
 # Make sure starter fixtures can load successfully and all tests pass.
 # Run tests with --keepdb to avoid OperationalError during teardown, in case
 # any db connections are stillr open from threads in TransactionTestCases.
