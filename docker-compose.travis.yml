@@ -4,15 +4,15 @@ version: '2'
 
 services:
 
-  saucelabs:
-    image: ustwo/sauce-connect
-    command: -P 4445 --tunnel-identifier $TRAVIS_JOB_NUMBER
-    environment:
-      - SAUCE_USERNAME
-      - SAUCE_ACCESS_KEY
-      - TRAVIS_JOB_NUMBER
-    ports:
-      - "4445:4445"
+  # saucelabs:
+  #   image: ustwo/sauce-connect
+  #   command: -P 4445 --tunnel-identifier $TRAVIS_JOB_NUMBER
+  #   environment:
+  #     - SAUCE_USERNAME
+  #     - SAUCE_ACCESS_KEY
+  #     - TRAVIS_JOB_NUMBER
+  #   ports:
+  #     - "4445:4445"
 
   celerybeat:
     extends:
@@ -51,7 +51,17 @@ services:
       file: common-services.yml
       service: cyphon-test
     environment:
-      CYPHON_SUPERUSER: "YES"
+      - CYPHON_SUPERUSER: "YES"
+      - FUNCTIONAL_TESTS_DRIVER
+      - SAUCE_USERNAME
+      - SAUCE_ACCESS_KEY
+      - TRAVIS_JOB_NUMBER
+      - TRAVIS_BUILD_NUMBER
+      - TRAVIS_PYTHON_VERSION
+      - TWITTER_ACCESS_TOKEN
+      - TWITTER_KEY
+      - TWITTER_SECRET
+      - TWITTER_TOKEN_SECRET
     volumes_from:
       - geoip
     links:
