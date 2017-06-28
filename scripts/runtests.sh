@@ -15,6 +15,11 @@ docker exec cyphondock_cyphon_1 grep "saucelabs" tests/functional_tests.py
 # Run tests with --keepdb to avoid OperationalError during teardown, in case
 # any db connections are stillr open from threads in TransactionTestCases.
 docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json || true
+while ! docker logs cyphondock_saucelabs_1 | grep -q "Selenium listener started"
+do
+  echo "Waiting for Saucelabs Connect proxy..."
+  sleep 10
+done
 docker exec \
   -e FUNCTIONAL_TESTS_DRIVER=SAUCELABS \
   -e SAUCE_USERNAME \
