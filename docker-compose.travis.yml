@@ -51,7 +51,7 @@ services:
       file: common-services.yml
       service: cyphon-test
     environment:
-      CYPHON_SUPERUSER: "YES"
+      - CYPHON_SUPERUSER=YES
       - FUNCTIONAL_TESTS_DRIVER
       - SAUCE_USERNAME
       - SAUCE_ACCESS_KEY
