@@ -31,4 +31,16 @@ docker exec \
   -e TWITTER_KEY \
   -e TWITTER_SECRET \
   -e TWITTER_TOKEN_SECRET \
+  cyphondock_cyphon_1 python -c "from tests.functional_tests import *; get_web_driver()"
+docker exec \
+  -e FUNCTIONAL_TESTS_DRIVER=SAUCELABS \
+  -e SAUCE_USERNAME \
+  -e SAUCE_ACCESS_KEY \
+  -e TRAVIS_JOB_NUMBER \
+  -e TRAVIS_BUILD_NUMBER \
+  -e TRAVIS_PYTHON_VERSION \
+  -e TWITTER_ACCESS_TOKEN \
+  -e TWITTER_KEY \
+  -e TWITTER_SECRET \
+  -e TWITTER_TOKEN_SECRET \
   cyphondock_cyphon_1 python manage.py test --noinput --keepdb -v 2
