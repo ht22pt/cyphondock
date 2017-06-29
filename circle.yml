@@ -1,12 +1,10 @@
-machine:
-  python:
-    version: 3.6.1
-  services:
-    - docker
-test:
-  pre:
-    - docker-compose -f docker-compose.travis.yml up --build -d
-    - docker ps -a
-    - sleep 30
-  override:
-    - ./scripts/runtests.sh
+version: 2
+jobs:
+  build:
+    docker:
+      image: circleci/python:3.6
+    steps:
+      - docker-compose -f docker-compose.travis.yml up --build -d
+      - docker ps -a
+      - sleep 30
+      - ./scripts/runtests.sh
