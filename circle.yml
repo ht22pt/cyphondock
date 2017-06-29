@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/cyphondock
     docker:
-      image: circleci/python:3.6
+      - image: circleci/python:3.6
     steps:
       - checkout
       - run: docker-compose -f docker-compose.travis.yml up --build -d
