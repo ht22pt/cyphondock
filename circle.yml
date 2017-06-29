@@ -11,8 +11,7 @@ jobs:
           name: Install Docker Compose
           command: |
             set -x
-            sudo pip install -U pip
-            sudo pip install -U docker-compose
+            sudo curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose
       # - setup_remote_docker
       - run:
           name: Build Docker containers
