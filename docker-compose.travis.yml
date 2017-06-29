@@ -119,7 +119,7 @@ services:
     ports:
       - "5044:5044"
       - "5045:5045"
-      - "elasticsearch:9200:9200"
+      - "9200:9200"
     volumes:
       - ./config-COPYME/logstash/pipeline:/etc/logstash/conf.d:ro
       - ./config-COPYME/logstash/config:/usr/share/logstash/config:ro
