@@ -3,10 +3,17 @@ jobs:
   build:
     working_directory: ~/cyphondock
     docker:
-      - image: circleci/python:3.6
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
-      - run: docker-compose -f docker-compose.travis.yml up --build -d
-      - run: docker ps -a
-      - run: sleep 30
-      - run: ./scripts/runtests.sh
+      - run:
+          name: Build Docker containers
+          command: |
+            docker-compose -f docker-compose.travis.yml \
+            up --build -d
+      - run:
+          name: Wait for containers to boot up
+          command: sleep 30
+      - run:
+          name: Run tests
+          command: ./scripts/runtests.sh
