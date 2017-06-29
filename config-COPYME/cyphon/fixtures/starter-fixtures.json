@@ -513,11 +513,29 @@
   }
 },
 {
+  "model": "procedures.protocol",
+  "fields": {
+    "name": "polarity",
+    "package": "sentiment",
+    "module": "sentiment",
+    "function": "get_polarity"
+  }
+},
+{
+  "model": "procedures.protocol",
+  "fields": {
+    "name": "sentiment",
+    "package": "sentiment",
+    "module": "sentiment",
+    "function": "get_sentiment"
+  }
+},
+{
   "model": "procedures.procedure",
   "pk": 1,
   "fields": {
     "name": "geocode_destination_ip",
-    "protocol": ["geoip", "geoip", "get_lng_lat"],
+    "protocol": ["geoip"],
     "field_name": "destination_ip"
   }
 },
@@ -526,8 +544,26 @@
   "pk": 2,
   "fields": {
     "name": "geocode_source_ip",
-    "protocol": ["geoip", "geoip", "get_lng_lat"],
+    "protocol": ["geoip"],
     "field_name": "source_ip"
+  }
+},
+{
+  "model": "procedures.procedure",
+  "pk": 3,
+  "fields": {
+    "name": "text_polarity",
+    "protocol": ["polarity"],
+    "field_name": "text"
+  }
+},
+{
+  "model": "procedures.procedure",
+  "pk": 4,
+  "fields": {
+    "name": "text_sentiment",
+    "protocol": ["sentiment"],
+    "field_name": "text"
   }
 },
 {
@@ -1496,6 +1532,15 @@
 {
   "model": "bottles.bottlefield",
   "fields": {
+    "field_name": "ref_id",
+    "field_type": "CharField",
+    "target_type": null,
+    "embedded_doc": null
+  }
+},
+{
+  "model": "bottles.bottlefield",
+  "fields": {
     "field_name": "region_code",
     "field_type": "CharField",
     "target_type": null,
@@ -2042,10 +2087,10 @@
   "fields": {
     "name": "user",
     "fields": [
-      ["id"],
       ["link"],
       ["name"],
       ["profile_pic"],
+      ["ref_id"],
       ["screen_name"]
     ]
   }
@@ -2276,8 +2321,10 @@
     "name": "post",
     "fields": [
       ["created_date"],
+      ["link"],
       ["location"],
-      ["post_content"],
+      ["ref_id"],
+      ["text"],
       ["user"]
     ]
   }
@@ -2382,12 +2429,48 @@
   }
 },
 {
+  "model": "labels.labelfield",
+  "fields": {
+    "field_name": "polarity",
+    "field_type": "FloatField",
+    "target_type": null,
+    "content_type": [
+      "procedures",
+      "procedure"
+    ],
+    "object_id": 3
+  }
+},
+{
+  "model": "labels.labelfield",
+  "fields": {
+    "field_name": "sentiment",
+    "field_type": "CharField",
+    "target_type": null,
+    "content_type": [
+      "procedures",
+      "procedure"
+    ],
+    "object_id": 4
+  }
+},
+{
   "model": "labels.label",
   "fields": {
     "name": "geoip",
     "fields": [
       ["source_ip_location"],
       ["destination_ip_location"]
+    ]
+  }
+},
+{
+  "model": "labels.label",
+  "fields": {
+    "name": "post",
+    "fields": [
+      ["polarity"],
+      ["sentiment"]
     ]
   }
 },
@@ -2452,7 +2535,7 @@
   "fields": {
     "name": "post",
     "bottle": ["post"],
-    "label": null
+    "label": ["post"]
   }
 },
 {
@@ -2726,20 +2809,6 @@
 {
   "model": "tastes.taste",
   "fields": {
-    "container": ["snort"],
-    "author": "host",
-    "title": "classification",
-    "content": "signature",
-    "location": "src_geoip.location",
-    "location_format": "LNG/LAT",
-    "datetime": "sys_timestamp",
-    "date_string": "",
-    "date_format": ""
-  }
-},
-{
-  "model": "tastes.taste",
-  "fields": {
     "container": ["mail"],
     "author": "from",
     "title": "subject",
@@ -2770,11 +2839,25 @@
   "fields": {
     "container": ["post"],
     "author": "user.screen_name",
-    "title": "post_content.text",
-    "content": "post_content.text",
+    "title": "text",
+    "content": "text",
     "location": "location",
     "location_format": "LNG/LAT",
     "datetime": "created_date",
+    "date_string": "",
+    "date_format": ""
+  }
+},
+{
+  "model": "tastes.taste",
+  "fields": {
+    "container": ["snort"],
+    "author": "host",
+    "title": "classification",
+    "content": "signature",
+    "location": "src_geoip.location",
+    "location_format": "LNG/LAT",
+    "datetime": "sys_timestamp",
     "date_string": "",
     "date_format": ""
   }
@@ -2824,14 +2907,25 @@
   "fields": {
     "name": "created_at__DATE",
     "method": "DATE",
-    "regex": "",
-    "formatter": "",
+    "regex": null,
+    "formatter": null,
     "source_fields": "created_at"
   }
 },
 {
   "model": "datacondensers.dataparser",
   "pk": 3,
+  "fields": {
+    "name": "id_str__COPY",
+    "method": "COPY",
+    "regex": null,
+    "formatter": null,
+    "source_fields": "id_str"
+  }
+},
+{
+  "model": "datacondensers.dataparser",
+  "pk": 4,
   "fields": {
     "name": "text__COPY",
     "method": "COPY",
@@ -2842,7 +2936,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 4,
+  "pk": 5,
   "fields": {
     "name": "twitter__content_image",
     "method": "COPY",
@@ -2853,7 +2947,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 5,
+  "pk": 6,
   "fields": {
     "name": "twitter__content_link",
     "method": "COPY",
@@ -2864,7 +2958,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 6,
+  "pk": 7,
   "fields": {
     "name": "twitter__user_link",
     "method": "COPY",
@@ -2875,7 +2969,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 7,
+  "pk": 8,
   "fields": {
     "name": "user.id_str__COPY",
     "method": "COPY",
@@ -2886,7 +2980,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 8,
+  "pk": 9,
   "fields": {
     "name": "user.name__COPY",
     "method": "COPY",
@@ -2897,7 +2991,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 9,
+  "pk": 10,
   "fields": {
     "name": "user.profile_image_url__COPY",
     "method": "COPY",
@@ -2908,7 +3002,7 @@
 },
 {
   "model": "datacondensers.dataparser",
-  "pk": 10,
+  "pk": 11,
   "fields": {
     "name": "user.screen_name__COPY",
     "method": "COPY",
@@ -2921,8 +3015,8 @@
   "model": "datacondensers.datacondenser",
   "pk": 1,
   "fields": {
-    "name": "twitter__content",
-    "bottle": ["post_content"]
+    "name": "twitter__post",
+    "bottle": ["post"]
   }
 },
 {
@@ -2934,19 +3028,23 @@
   }
 },
 {
-  "model": "datacondensers.datacondenser",
-  "pk": 3,
-  "fields": {
-    "name": "twitter__post",
-    "bottle": ["post"]
-  }
-},
-{
   "model": "datacondensers.datafitting",
   "fields": {
     "condenser": ["twitter__post"],
     "target_field": ["created_date"],
     "object_id": 2,
+    "content_type": [
+      "datacondensers",
+      "dataparser"
+    ]
+  }
+},
+{
+  "model": "datacondensers.datafitting",
+  "fields": { 
+    "condenser": ["twitter__post"],
+    "target_field": ["link"],
+    "object_id": 6,
     "content_type": [
       "datacondensers",
       "dataparser"
@@ -2968,32 +3066,8 @@
 {
   "model": "datacondensers.datafitting",
   "fields": {
-    "condenser": ["twitter__content"],
-    "target_field": ["image"],
-    "object_id": 4, 
-    "content_type": [
-      "datacondensers",
-      "dataparser"
-    ]
-  }
-},
-{
-  "model": "datacondensers.datafitting",
-  "fields": { 
-    "condenser": ["twitter__content"],
-    "target_field": ["link"],
-    "object_id": 5,
-    "content_type": [
-      "datacondensers",
-      "dataparser"
-    ]
-  }
-},
-{
-  "model": "datacondensers.datafitting",
-  "fields": {
-    "condenser": ["twitter__content"],
-    "target_field": ["text"],
+    "condenser": ["twitter__post"],
+    "target_field": ["ref_id"],
     "object_id": 3,
     "content_type": [
       "datacondensers",
@@ -3004,8 +3078,20 @@
 {
   "model": "datacondensers.datafitting",
   "fields": {
+    "condenser": ["twitter__post"],
+    "target_field": ["text"],
+    "object_id": 4,
+    "content_type": [
+      "datacondensers",
+      "dataparser"
+    ]
+  }
+},
+{
+  "model": "datacondensers.datafitting",
+  "fields": {
     "condenser": ["twitter__user"],
-    "target_field": ["id"],
+    "target_field": ["link"],
     "object_id": 7,
     "content_type": [
       "datacondensers",
@@ -3017,31 +3103,7 @@
   "model": "datacondensers.datafitting",
   "fields": {
     "condenser": ["twitter__user"],
-    "target_field": ["link"],
-    "object_id": 6,
-    "content_type": [
-      "datacondensers",
-      "dataparser"
-    ]
-  }
-},
-{
-  "model": "datacondensers.datafitting",
-  "fields": {
-    "condenser": ["twitter__user"],
     "target_field": ["name"],
-    "object_id": 8,
-    "content_type": [
-      "datacondensers",
-      "dataparser"
-    ]
-  }
-},
-{
-  "model": "datacondensers.datafitting",
-  "fields": {
-    "condenser": ["twitter__user"],
-    "target_field": ["profile_pic"],
     "object_id": 9,
     "content_type": [
       "datacondensers",
@@ -3053,7 +3115,7 @@
   "model": "datacondensers.datafitting",
   "fields": {
     "condenser": ["twitter__user"],
-    "target_field": ["screen_name"],
+    "target_field": ["profile_pic"],
     "object_id": 10,
     "content_type": [
       "datacondensers",
@@ -3064,12 +3126,24 @@
 {
   "model": "datacondensers.datafitting",
   "fields": {
-    "condenser": ["twitter__post"],
-    "target_field": ["post_content"],
-    "object_id": 1,
+    "condenser": ["twitter__user"],
+    "target_field": ["ref_id"],
+    "object_id": 8,
     "content_type": [
       "datacondensers",
-      "datacondenser"
+      "dataparser"
+    ]
+  }
+},
+{
+  "model": "datacondensers.datafitting",
+  "fields": {
+    "condenser": ["twitter__user"],
+    "target_field": ["screen_name"],
+    "object_id": 11,
+    "content_type": [
+      "datacondensers",
+      "dataparser"
     ]
   }
 },
