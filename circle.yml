@@ -1,6 +1,8 @@
 machine:
   python:
     version: 3.6.1
+  services:
+    - docker
 test:
   pre:
     - docker-compose -f docker-compose.travis.yml up --build -d
