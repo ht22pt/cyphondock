@@ -1,10 +1,12 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/cyphondock
     docker:
       image: circleci/python:3.6
     steps:
-      - docker-compose -f docker-compose.travis.yml up --build -d
-      - docker ps -a
-      - sleep 30
-      - ./scripts/runtests.sh
+      - checkout
+      - run: docker-compose -f docker-compose.travis.yml up --build -d
+      - run: docker ps -a
+      - run: sleep 30
+      - run: ./scripts/runtests.sh
