@@ -1,9 +1,10 @@
 version: 2
 jobs:
   build:
+    machine: true
     working_directory: ~/cyphondock
-    docker:
-      - image: circleci/python:3.6
+    # docker:
+    #   - image: circleci/python:3.6
     steps:
       - checkout
       - run:
@@ -12,7 +13,7 @@ jobs:
             set -x
             sudo pip install -U pip
             sudo pip install -U docker-compose
-      - setup_remote_docker
+      # - setup_remote_docker
       - run:
           name: Build Docker containers
           command: |
