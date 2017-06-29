@@ -7,6 +7,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install docker-compose
+          command: |
+            pip install -U docker-compose
+      - run:
           name: Build Docker containers
           command: |
             docker-compose -f docker-compose.travis.yml \
