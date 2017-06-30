@@ -23,7 +23,7 @@ services:
     volumes:
       - ../cyphon/cyphon:/usr/src/app/cyphon
       - ../cyphon/entrypoints:/usr/src/app/entrypoints
-      - ./config/cyphon/custom:/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeusr/src/app/cyphon/custom
+      - ./config/cyphon/custom:/usr/src/app/cyphon/custom
       - ./config/cyphon/settings:/usr/src/app/cyphon/cyphon/settings
 
   cyphon-prod:
