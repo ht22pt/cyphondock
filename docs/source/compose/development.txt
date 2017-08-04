@@ -1,0 +1,225 @@
+.. _development:
+
+#######################
+Development Environment
+#######################
+
+Unlike the :ref:`production environment<production>`, the dev environment builds the images for Cyphon using local files. You'll need to download the Cyphon GitHub repository into the ``/opt/cyphon/cyphon`` directory so these files are available to Docker Compose::
+
+    $ git clone https://github.com/dunbarcyber/cyphon.git /opt/cyphon/cyphon
+
+Settings for the dev environment are contained in the 
+``docker-compose.dev.yml`` file. To use the dev environment, you must 
+specify both the base configuration file and the dev configuration file 
+when starting the containers::
+
+    $ cd /opt/cyphon/cyphondock
+    $ sudo docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+Use the ``-d`` flag if you want to start the containers in the 
+background.
+
+
+.. _dev-superuser:
+
+*********
+Superuser
+*********
+
+The dev environment will create a Cyphon superuser using the ``CYPHON_USERNAME`` and ``CYPHON_PASSWORD`` settings defined in your `.config/env/cyphon.env <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/env/cyphon.env#L1-L2>`__ file, if that user does not already exist.
+
+
+.. _dev-ports:
+
+*****
+Ports
+*****
+
+The dev environment maps the exposed ports in the containers to random 
+free ports on the host. This prevents any problems with ports already 
+in use on the host. Once the docker containers are running, you can 
+list the containers to see which ports on the host are being used for 
+the various services::
+
+    $ sudo docker ps -a
+
+For example, the Kibana container exposes port 5601, but that port will 
+be mapped to a random port on the host machine. If the port mapping for 
+the Kibana container is ``0.0.0.0:32775->5601/tcp``, you would visit 
+``http://localhost:32775`` in your web browser to access Kibana.
+
+
+.. _dev-volumes:
+
+************
+Data Volumes
+************
+
+Unlike the :ref:`production environment<prod-volumes>`, the dev environment does not assign 
+any specific host directories to store data from PostgreSQL, 
+Elasticsearch, or MongoDB. Instead, it allows those services to 
+automatically configure the locations for their data volumes. This 
+prevents any confusion of dev and production data if the production 
+environment is used at a later time. See Docker's `documentation <https://docs.docker.com/engine/tutorials/dockervolumes/>`_ to learn more about data volumes.
+
+
+.. _dev-overrides:
+
+*******************
+Container Overrides
+*******************
+
+.. _dev-cyphon:
+
+Cyphon
+======
+
+This override for the :ref:`base Cyphon service<celerybeat-service>` will create a Docker container using the :ref:`Cyphon dev image<dev-image>`. It will also create a superuser using the settings in the :ref:`cyphon-env`, and load starter settings from :ref:`cyphon-fixtures`.
+
+**YAML**::
+
+    cyphon:
+      extends:
+        file: common-services.yml
+        service: cyphon-dev
+      environment:
+        CYPHON_SUPERUSER: "YES"
+        LOAD_EXAMPLE_FIXTURES: "YES"
+      ports:
+        - "8000"
+
+
+.. _dev-celerybeat:
+
+Celerybeat
+==========
+
+This override for the :ref:`base Celerybeat service<celerybeat-service>` will create a Docker container using the :ref:`Cyphon dev image<dev-image>`.
+
+**YAML**::
+
+    celerybeat:
+      extends:
+        file: common-services.yml
+        service: cyphon-dev
+
+
+.. _dev-celeryworker:
+
+Celeryworker
+============
+
+This override for the :ref:`base Celeryworker service<celeryworker-service>` will create a Docker container using the :ref:`Cyphon dev image<dev-image>`.
+
+**YAML**::
+
+    celeryworker:
+      extends:
+        file: common-services.yml
+        service: cyphon-dev
+
+
+.. _dev-logchutes:
+
+LogChutes
+=========
+
+This override for the :ref:`base LogChutes service<logchutes-service>` will create a Docker container using the :ref:`Cyphon dev image<dev-image>`.
+
+**YAML**::
+
+    logchutes:
+      extends:
+        file: common-services.yml
+        service: cyphon-dev
+
+
+
+.. _dev-monitors:
+
+Monitors
+========
+
+This override for the :ref:`base Monitors service<monitors-service>` will create a Docker container using the :ref:`Cyphon dev image<dev-image>`.
+
+**YAML**::
+
+    monitors:
+      extends:
+        file: common-services.yml
+        service: cyphon-dev
+
+
+.. _dev-watchdogs:
+
+Watchdogs
+=========
+
+This override for the :ref:`base Watchdogs service<watchdogs-service>` will create a Docker container using the :ref:`Cyphon dev image<dev-image>`.
+
+**YAML**::
+
+    watchdogs:
+      extends:
+        file: common-services.yml
+        service: cyphon-dev
+
+
+.. _dev-nginx:
+
+Nginx
+=====
+
+This override for the :ref:`base Nginx service<nginx-service>` will map the ports used by :ref:`cyphon-service`, :ref:`kibana-service`, and :ref:`rabbit-service` to random ports on the host machine.
+
+**YAML**::
+
+    nginx:
+      ports:
+        - "80"     # Cyphon
+        - "443"    # Cyphon
+        - "5601"   # Kibana
+        - "15672"  # RabbitMQ management plugin
+
+
+.. _dev-rabbit:
+
+RabbitMQ
+========
+
+This override for the :ref:`base RabbitMQ service<rabbit-service>` will map port 15672 of the Logstash container to a random port on the host machine. This port is used for the RabbitMQ management web interface.
+
+**YAML**::
+
+    rabbit:
+      ports:
+        - "15672"  # RabbitMQ management plugin
+
+
+.. _dev-logstash:
+
+Logstash
+========
+
+This override for the :ref:`base Logstash service<logstash-service>` will map ports 5044-5045 of the Logstash container to random ports on the host machine.
+
+**YAML**::
+
+    logstash:
+      ports:
+        - "5044"
+        - "5045"
+
+
+.. _dev-kibana:
+
+Kibana
+======
+
+This override for the :ref:`base Kibana service<kibana-service>` will map port 5601 of the Kibana container to a random port on the host machine.
+
+**YAML**::
+
+    kibana:
+      ports:
+        - "5601"

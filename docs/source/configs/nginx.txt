@@ -1,0 +1,20 @@
+.. _nginx-configs:
+
+####################
+Nginx Configurations
+####################
+
+.. _nginx.conf:
+.. _nginx.conf.ssl:
+
+**********
+nginx.conf
+**********
+
+The `nginx.conf <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/nginx/nginx.conf>`__ file configures the Nginx web server for accessing Cyphon. See Nginx's `documentation <http://nginx.org/en/docs/beginners_guide.html>`__ for details.
+
+**************
+nginx.conf.ssl
+**************
+
+The `nginx.conf.ssl <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/nginx/nginx.conf.ssl>`__ file can be optionally used to run Cyphon with SSL. The SSL server certificate should be copied into `ssl.crt <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/nginx/ssl.crt>`__ and the corresponding private key should be copied into `ssl.key <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/nginx/ssl.key>`__. See Nginx's `documentation <http://nginx.org/en/docs/http/configuring_https_servers.html>`__ on configuring other SSL options.

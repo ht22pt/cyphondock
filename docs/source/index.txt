@@ -1,0 +1,32 @@
+.. image:: _static/images/cyphondock-logo.png
+    :width: 775px
+    :align: center
+    :alt: Cyphondock
+
+########################
+Cyphondock Documentation
+########################
+
+Cyphondock is a collection of `Docker Compose <https://docs.docker.com/compose/>`__ files and configurations for running `Cyphon <https://github.com/dunbarcyber/cyphon>`__.
+
+Cyphondock allows you to easily deploy a stack of Docker containers for running Cyphon and its related services, including:
+
+    - `PostgreSQL`_
+    - `RabbitMQ`_
+    - `Nginx`_
+    - `Logstash`_
+    - `Elasticsearch`_
+
+It also contains example configurations for these services.
+
+These files are here to help you get up and running quickly with Cyphon, but you should feel free to modify the Docker Compose files and configuration files to suit your particular needs.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   configure-server
+   configure-project
+   securing-cyphon
+   compose/compose
+   configs/configs

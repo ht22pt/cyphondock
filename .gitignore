@@ -1,4 +1,6 @@
 *.pyc
 /config/
+build/
 custom/
+docs/build/
 log/

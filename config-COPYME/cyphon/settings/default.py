@@ -59,10 +59,6 @@ PROJ_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 HOME_DIR = os.path.dirname(PROJ_DIR)
 KEYS_DIR = os.path.join(HOME_DIR, 'keys')
 
-ALERTS = {
-    'ALERT_URL': '/#/alerts?alertDetail=',
-}
-
 APPUSERS = {
     'CUSTOM_FILTER_BACKENDS': []
 }
@@ -129,11 +125,12 @@ ELASTICSEARCH = {
 }
 
 EMAIL = {
-    'NAME': 'Cyphon',
-    'HOST': 'smtp.gmail.com',
-    'HOST_USER': 'user@',
-    'HOST_PASSWORD': 'you',
+    'DEFAULT_FROM': 'webmaster@localhost',
+    'HOST': 'localhost',
+    'HOST_USER': '',
+    'HOST_PASSWORD': '',
     'PORT': 587,
+    'SUBJECT_PREFIX': '[Cyphon] ',
     'USE_TLS': True,
 }
 
@@ -389,6 +386,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'cyphon.version.VersionMiddleware',
 )
 
 ROOT_URLCONF = 'cyphon.urls'
@@ -438,12 +436,12 @@ PASSWORD_MIN_LENGTH = 6
 PASSWORD_MAX_LENGTH = 30
 
 # This section is for sending email to users. This example is a gmail account.
-EMAIL_NAME = EMAIL['NAME']
 EMAIL_HOST = EMAIL['HOST']
 EMAIL_HOST_USER = EMAIL['HOST_USER']
 EMAIL_HOST_PASSWORD = EMAIL['HOST_PASSWORD']
 EMAIL_PORT = EMAIL['PORT']
 EMAIL_USE_TLS = EMAIL['USE_TLS']
+DEFAULT_FROM_EMAIL = EMAIL['DEFAULT_FROM']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

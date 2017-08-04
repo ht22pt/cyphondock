@@ -1,0 +1,81 @@
+.. _cyphon-configs:
+
+#####################
+Cyphon Configurations
+#####################
+
+.. _cyphon-fixtures:
+
+********
+Fixtures
+********
+
+The `cyphon/fixtures/starter-fixtures.json <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/fixtures/starter-fixtures.json>`__ file contains some generic configurations to use when starting your Cyphon project. You can read more about fixtures in Django's `documentation <https://docs.djangoproject.com/en/1.11/howto/initial-data/>`__.
+
+
+.. _cyphon-custom:
+
+******
+Custom
+******
+
+The `cyphon/custom <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/custom/>`__ directory provides a place to add custom modules for Cyphon admin pages and filter backends. See the documentation for the `Django admin site <https://docs.djangoproject.com/en/1.11/ref/contrib/admin/>`__ and `Django REST Framework filters <http://www.django-rest-framework.org/api-guide/filtering/>`__ to learn more.
+
+
+.. _cyphon-settings:
+
+********
+Settings
+********
+
+The `cyphon/settings <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/settings/>`__ directory contains configurations for Cyphon's Django-based web framework, as well Cyphon-specific configurations. You can read more about Django settings in Django's `documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
+
+
+.. _conf.py:
+
+conf.py
+=======
+
+The `conf.py <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/settings/conf.py>`__ file contains settings specific to your Cyphon instance. 
+
+At a minimum, should edit the ``conf.py`` file with the IP address and/or domain name for your host machine::
+
+    HOST_SETTINGS = {
+       'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
+       'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
+    }
+
+You should also change the Django ``SECRET_KEY`` to something unique. 
+You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__.
+
+
+.. _base.py:
+
+base.py
+=======
+
+The `base.py <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/settings/base.py>`__ file contains Django settings common to both the :ref:`production` and :ref:`development`. 
+
+
+.. _dev.py:
+
+dev.py
+======
+
+The `dev.py <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/settings/dev.py>`__ file contains Django settings specific to the :ref:`development`. At a minimum, you should configure the ``BASE_URL`` setting.
+
+
+.. _prod.py:
+
+prod.py
+=======
+
+The `prod.py <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/settings/prod.py>`__ file contains Django settings specific to the :ref:`production`. At a minimum, you should configure the ``BASE_URL`` setting.
+
+
+.. _default.py:
+
+default.py
+==========
+
+The `default.py <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/settings/default.py>`__ file contains generic settings that can be used when running services that require Cyphon apps, such as Cyphon's message `receiver <http://cyphon.readthedocs.io/en/latest/modules/receiver.html>`__.

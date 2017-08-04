@@ -1,0 +1,518 @@
+.. _base:
+
+##################
+Base Configuration
+##################
+
+The `docker-compose.yml`_ file contains base settings for use in both the :ref:`production` and :ref:`development`. The file includes the following services:
+
+* :ref:`cyphon-services`
+* :ref:`postgres-service`
+* :ref:`rabbit-service`
+* :ref:`nginx-service`
+* :ref:`geoip-service`
+* :ref:`elastic-services`
+* :ref:`mongo-service`
+* :ref:`logspout-service`
+
+
+.. _cyphon-services:
+
+***************
+Cyphon services
+***************
+
+.. _cyphon-service:
+
+Cyphon
+======
+
+This service is based on the :ref:`Cyphon production image<prod-image>`. It links to :ref:`postgres-service`, which it uses as its Django backend database service for storing Cyphon admin settings and alerts. It also links to :ref:`elasticsearch-service` and (optionally) :ref:`mongo-service` for storing data.
+
+The service creates a volume for :ref:`Cyphon fixtures <cyphon-fixtures>`, which can be used to `load settings <http://cyphon.readthedocs.io/en/latest/getting-started/load-settings.html>`__. It also uses the GeoLite2 database from the :ref:`GeoIP service<geoip-service>` to assign geolocations to IP addresses.
+
+=============  =========================================================
+Extends        :ref:`Cyphon production image<prod-image>`
+Links          :ref:`postgres-service`, :ref:`elasticsearch-service`, (optionally) :ref:`mongo-service`
+Dependency     :ref:`postgres-service`
+Shared Volume  :ref:`geoip-service`
+=============  =========================================================
+
+**YAML**::
+
+    cyphon:
+      extends:
+        file: common-services.yml
+        service: cyphon-prod
+      volumes_from:
+        - geoip
+      links:
+        - elasticsearch
+        # - mongo
+        - postgres
+      depends_on:
+        - postgres
+
+        serialized_results = [AlertDetailSerializer(alert) for alert in queryset]
+
+
+.. _celerybeat-service:
+
+Celerybeat
+==========
+
+This service runs a `celery beat scheduler <http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html>`__ for periodic tasks, such as checking and processing email. It is similar to the :ref:`Cyphon service<cyphon-service>`, but it runs a different command on start up, and it has a link to :ref:`rabbit-service`, where it sends the scheduled tasks.
+
+=============  =========================================================
+Extends         :ref:`Cyphon production image<prod-image>`
+Command        `run_celerybeat.sh <https://github.com/dunbarcyber/cyphon/blob/master/entrypoints/run_celerybeat.sh>`__
+Links          :ref:`postgres-service`, :ref:`rabbit-service`, :ref:`elasticsearch-service`, (optionally) :ref:`mongo-service`
+Dependencies   :ref:`postgres-service`, :ref:`rabbit-service`
+Shared Volume  :ref:`geoip-service`
+=============  =========================================================
+
+**YAML**::
+
+    celerybeat:
+      extends:
+        file: common-services.yml
+        service: cyphon-prod
+      restart: always
+      command: ../entrypoints/run_celerybeat.sh
+      volumes_from:
+        - geoip
+      links:
+        - elasticsearch
+        # - mongo
+        - postgres
+        - rabbit
+      depends_on:
+        - cyphon
+        - rabbit
+
+
+.. _celeryworker-service:
+
+Celeryworker
+============
+
+This service runs a `celery worker <http://docs.celeryproject.org/en/latest/userguide/workers.html>`__ to handle periodic tasks sent to :ref:`rabbit-service` by :ref:`celerybeat-service`. It is similar to the :ref:`Celerybeat service<celerybeat-service>`, but it runs a different command on start up.
+
+=============  =========================================================
+Extends          :ref:`Cyphon production image<prod-image>`
+Command        `run_celeryworker.sh <https://github.com/dunbarcyber/cyphon/blob/master/entrypoints/run_celeryworker.sh>`__
+Links          :ref:`postgres-service`, :ref:`rabbit-service`, :ref:`elasticsearch-service`, (optionally) :ref:`mongo-service`
+Dependencies   :ref:`postgres-service`, :ref:`rabbit-service`
+Shared Volume  :ref:`geoip-service`
+=============  =========================================================
+
+**YAML**::
+
+    celeryworker:
+      extends:
+        file: common-services.yml
+        service: cyphon-prod
+      restart: always
+      command: ../entrypoints/run_celeryworker.sh
+      volumes_from:
+        - geoip
+      links:
+        - elasticsearch
+        # - mongo
+        - postgres
+        - rabbit
+      depends_on:
+        - cyphon
+        - rabbit
+
+
+.. _logchutes-service:
+
+LogChutes
+=========
+
+This service creates a queue consumer for log messages sent to :ref:`rabbit-service` from  :ref:`logstash-service`. The messages are sent to Cyphon's `LogChutes <http://cyphon.readthedocs.io/en/latest/modules/sifter.logsifter.logchutes.html>`__ for processing.
+
+=============  =========================================================
+Image          :ref:`Cyphon production image<prod-image>`
+Command        `run_receiver.sh <https://github.com/dunbarcyber/cyphon/blob/master/entrypoints/run_receiver.sh>`__ ``logchutes``
+Links          :ref:`postgres-service`, :ref:`rabbit-service`, :ref:`elasticsearch-service`, (optionally) :ref:`mongo-service`
+Dependencies   :ref:`postgres-service`, :ref:`rabbit-service`
+Shared Volume  :ref:`geoip-service`
+=============  =========================================================
+
+**YAML**::
+
+    logchutes:
+      extends:
+        file: common-services.yml
+        service: cyphon-prod
+      restart: always
+      command: ../entrypoints/run_receiver.sh logchutes
+      volumes_from:
+        - geoip
+      links:
+        - elasticsearch
+        # - mongo
+        - postgres
+        - rabbit
+      depends_on:
+        - cyphon
+        - rabbit
+
+
+.. _monitors-service:
+
+Monitors
+========
+
+This service creates a queue consumer for JSON messages sent to :ref:`rabbit-service` from  :ref:`logstash-service`. These messages are inspected by Cyphon's `Monitors <http://cyphon.readthedocs.io/en/latest/user-manual/configuring-alarms.html#monitors>`__.
+
+=============  =========================================================
+Image          :ref:`Cyphon production image<prod-image>`
+Command        `run_receiver.sh <https://github.com/dunbarcyber/cyphon/blob/master/entrypoints/run_receiver.sh>`__ ``monitors``
+Links          :ref:`postgres-service`, :ref:`rabbit-service`, :ref:`elasticsearch-service`, (optionally) :ref:`mongo-service`
+Dependencies   :ref:`postgres-service`, :ref:`rabbit-service`
+Shared Volume  :ref:`geoip-service`
+=============  =========================================================
+
+**YAML**::
+
+    monitors:
+      extends:
+        file: common-services.yml
+        service: cyphon-prod
+      restart: always
+      command: ../entrypoints/run_receiver.sh monitors
+      volumes_from:
+        - geoip
+      links:
+        - elasticsearch
+        # - mongo
+        - postgres
+        - rabbit
+      depends_on:
+        - cyphon
+        - rabbit
+
+
+.. _watchdogs-service:
+
+Watchdogs
+=========
+
+This service creates a queue consumer for JSON messages sent to :ref:`rabbit-service` from :ref:`logstash-service`. These messages are inspected by Cyphon's `Watchdogs <http://cyphon.readthedocs.io/en/latest/user-manual/configuring-alarms.html#watchdogs>`__.
+
+=============  =========================================================
+Image          :ref:`Cyphon production image<prod-image>`
+Command        `run_receiver.sh <https://github.com/dunbarcyber/cyphon/blob/master/entrypoints/run_receiver.sh>`__ ``watchdogs``
+Links          :ref:`postgres-service`, :ref:`rabbit-service`, :ref:`elasticsearch-service`, (optionally) :ref:`mongo-service`
+Dependencies   :ref:`postgres-service`, :ref:`rabbit-service`
+Shared Volume  :ref:`geoip-service`
+=============  =========================================================
+
+**YAML**::
+
+    watchdogs:
+      extends:
+        file: common-services.yml
+        service: cyphon-prod
+      restart: always
+      command: ../entrypoints/run_receiver.sh watchdogs
+      volumes_from:
+        - geoip
+      links:
+        - elasticsearch
+        # - mongo
+        - postgres
+        - rabbit
+      depends_on:
+        - cyphon
+        - rabbit
+
+-----
+
+.. _postgres-service:
+
+**********
+PostgreSQL
+**********
+
+This service creates a PostGIS database for saving Cyphon configurations and alerts. It is used as the database backend for `GeoDjango <https://docs.djangoproject.com/en/1.11/ref/contrib/gis/>`__. The host name, database name, username, and passowrd are determined by settings in the :ref:`env-configs`. 
+
+=============  =========================================================
+Image          `mdillon/postgis <https://hub.docker.com/r/mdillon/postgis/>`__
+Env File       :ref:`cyphon.env<cyphon-env>`
+=============  =========================================================
+
+**YAML**::
+
+    postgres:
+      image: mdillon/postgis:${POSTGRES_VER}
+      restart: always
+      env_file:
+        - ./config/env/cyphon.env
+
+-----
+
+.. _rabbit-service:
+
+********
+RabbitMQ
+********
+
+This service creates a RabbitMQ message broker for :ref:`logstash-service` and :ref:`cyphon-services`. Defaults for the host name, virtual host, username, and password are determined by settings in the :ref:`env-configs`. 
+
+=============  =========================================================
+Image          `rabbitmq <https://hub.docker.com/_/rabbitmq/>`__
+Env File       :ref:`cyphon.env<cyphon-env>`
+=============  =========================================================
+
+**YAML**::
+
+    rabbit:
+      image: rabbitmq:${RABBITMQ_VER}
+      restart: always
+      env_file:
+        - ./config/env/cyphon.env
+
+-----
+
+.. _nginx-service:
+
+*****
+Nginx
+*****
+
+This service creates a web service for :ref:`cyphon-service`. It shares volumes from :ref:`cyphon-service`, including directories for static assets and media files.
+
+=============  =========================================================
+Image          `nginx <https://hub.docker.com/_/nginx/>`__
+Links          :ref:`cyphon-service`, :ref:`rabbit-service`, :ref:`kibana-service`
+Dependencies   :ref:`cyphon-service`
+Shared Volume  :ref:`cyphon-service`
+=============  =========================================================
+
+**YAML**::
+
+    nginx:
+      image: nginx:${NGINX_VER}
+      restart: always
+      volumes:
+        - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+        - ./config/nginx/ssl.crt:/etc/nginx/ssl.crt:ro
+        - ./config/nginx/ssl.key:/etc/nginx/ssl.key:ro
+        - /www/static
+      volumes_from:
+        - cyphon
+      links:
+        - cyphon
+        - kibana
+        - rabbit
+      depends_on:
+        - cyphon
+
+-----
+
+.. _geoip-service:
+
+*****
+GeoIP
+*****
+
+This service provides GeoLite2 databases for Cyphon's `GeoIP package <http://cyphon.readthedocs.io/en/latest/modules/lab.geoip.html>`__.
+
+=============  =========================================================
+Image          `geoip <https://hub.docker.com/r/dunbar/geoip/>`__
+=============  =========================================================
+
+**YAML**::
+
+    geoip:
+      image: dunbar/geoip
+      restart: always
+
+-----
+
+.. _elastic-services:
+
+*************
+Elastic stack
+*************
+
+
+.. _elasticsearch-service:
+
+Elasticsearch
+=============
+
+This service provides an Elasticsearch backend for Cyphon's `Warehouses <http://cyphon.readthedocs.io/en/latest/user-manual/data-storage.html#warehouses>`__. It's also used to store data from :ref:`logstash-service`.
+
+The host name and port are determined by settings in the :ref:`env-configs`. 
+
+=============  =========================================================
+Image          `nginx <https://hub.docker.com/_/nginx/>`__
+Environment    ``http.host=0.0.0.0`` ``transport.host=127.0.0.1``
+Links          :ref:`cyphon-service`, :ref:`rabbit-service`, :ref:`kibana-service`
+Volumes        :ref:`elasticsearch.yml`, :ref:`es-jvm.options`, :ref:`es-log4j2.properties`
+=============  =========================================================
+
+**YAML**::
+
+    elasticsearch:
+      image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VER}
+      restart: always
+      environment:
+        - http.host=0.0.0.0
+        - transport.host=127.0.0.1
+      volumes:
+        - ./config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+        - ./config/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+        - ./config/elasticsearch/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:ro
+
+
+.. _logstash-service:
+
+Logstash
+========
+
+This service ingests and parses logs, and sends them to :ref:`elasticsearch-service` and :ref:`rabbit-service`.
+
+=============  =========================================================
+Image          docker.elastic.co/logstash/logstash
+Command        ``logstash -f /usr/share/logstash/pipeline --config.reload.automatic``
+Links          :ref:`elasticsearch-service`, :ref:`rabbit-service`
+Dependencies   :ref:`elasticsearch-service`, :ref:`rabbit-service`
+Volumes        :ref:`logstash-configuration`, :ref:`logstash-patterns`, :ref:`logstash-pipeline`
+=============  =========================================================
+
+**YAML**::
+
+    logstash:
+      image: docker.elastic.co/logstash/logstash:${ELASTIC_VER}
+      restart: always
+      command: logstash -f /usr/share/logstash/pipeline --config.reload.automatic
+      volumes:
+        - ./config/logstash/config:/usr/share/logstash/config:ro
+        - ./config/logstash/patterns:/usr/share/logstash/patterns:ro
+        - ./config/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      links:
+        - elasticsearch
+        - rabbit
+      depends_on:
+        - elasticsearch
+        - rabbit
+
+
+.. _filebeat-service:
+
+Filebeat
+========
+
+This optional service can be used to monitor logs and send them to :ref:`logstash-service`. You can use it for local testing of your :ref:`filebeat-configs`.
+
+=============  =========================================================
+Image          docker.elastic.co/beats/filebeat
+Links          :ref:`logstash-service`
+Dependencies   :ref:`logstash-service`
+Volumes        :ref:`filebeat.yml`, ``./log``
+=============  =========================================================
+
+**YAML**::
+
+    # filebeat:
+    #   image: docker.elastic.co/beats/filebeat:${ELASTIC_VER}
+    #   restart: always
+    #   links:
+    #     - logstash
+    #   depends_on:
+    #     - logstash
+    #   volumes:
+    #     - ./config/beats/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:rw
+    #     - ./log:/var/log
+
+
+.. _kibana-service:
+
+Kibana
+======
+
+This service provides a dashboard for viewing :ref:`elasticsearch-service` data.
+
+=============  =========================================================
+Image          docker.elastic.co/kibana/kibana
+Environment    ``LOGSPOUT: ignore``
+Links          :ref:`elasticsearch-service`
+Dependencies   :ref:`elasticsearch-service`
+Volumes        :ref:`kibana.yml`
+=============  =========================================================
+
+**YAML**::
+
+    kibana:
+      image: docker.elastic.co/kibana/kibana:${ELASTIC_VER}
+      restart: always
+      environment:
+        LOGSPOUT: ignore  # don't send Kibana's logs to Logspout
+      links:
+        - elasticsearch
+      depends_on:
+        - elasticsearch
+      volumes:
+        - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+
+-----
+
+.. _mongo-service:
+
+*******
+MongoDB
+*******
+
+This optional service provides a MongoDB backend for Cyphon's `Warehouses <http://cyphon.readthedocs.io/en/latest/user-manual/data-storage.html#warehouses>`__. It can also be used to store data from :ref:`logstash-service` when used with Logstash's `MongoDB output plugin <https://www.elastic.co/guide/en/logstash/current/plugins-outputs-mongodb.html>`__.
+
+The host name and port are determined by settings in the :ref:`env-configs`. 
+
+=============  =========================================================
+Image          `mongo <https://hub.docker.com/_/mongo/>`__
+=============  =========================================================
+
+**YAML**::
+
+    # mongo:
+    #   image: mongo:${MONGODB_VER}
+    #   restart: always
+
+-----
+
+.. _logspout-service:
+
+********
+Logspout
+********
+
+This service collects logs from the other Docker containers and sends them to :ref:`logstash-service`. From there, they can be stored in :ref:`elasticsearch-service` and viewed in :ref:`kibana-service`.
+
+=============  =========================================================
+Image          `gliderlabs/logspout <https://hub.docker.com/r/gliderlabs/logspout/>`__
+Command        ``syslog://logstash:5000``
+Expose         5000/udp
+Links          :ref:`logstash-service`
+Dependencies   :ref:`logstash-service`
+Volumes        ``/var/run/docker.sock``
+=============  =========================================================
+
+**YAML**::
+
+    logspout:
+      image: gliderlabs/logspout:${LOGSPOUT_VER}
+      restart: always
+      expose:
+        - "5000/udp"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      command: syslog://logstash:5000
+      links:
+        - logstash
+      depends_on:
+        - logstash

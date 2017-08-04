@@ -1,0 +1,58 @@
+.. _logstash-configs:
+
+#######################
+Logstash Configurations
+#######################
+
+
+.. _logstash-configuration:
+
+******
+config
+******
+
+The `logstash/config <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/config>`__ directory contains Logstash `settings files <https://www.elastic.co/guide/en/logstash/current/config-setting-files.html#_settings_files>`__.
+
+
+.. _logstash.yml:
+
+logstash.yml
+============
+
+The `logstash.yml <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/config/logstash.yml>`__ file contains Logstash configuration flags. See Logstash's `documentation <https://www.elastic.co/guide/en/logstash/current/logstash-settings-file.html>`__ for more info.
+
+If you don't have `X-Pack <https://www.elastic.co/guide/en/x-pack/index.html>`__, be sure to include the setting ``xpack.monitoring.enabled: false: false``. See Elastic's `documentation <https://www.elastic.co/guide/en/x-pack/5.5/installing-xpack.html#xpack-enabling>`__ for more info.
+
+
+.. _logstash-jvm.options:
+
+jvm.options
+===========
+
+The `jvm.options <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/config/jvm.options>`__ file contains JVM configuration flags. It can be used to set JVM heap size and the locale for Logstash.
+
+
+.. _logstash-log4j2.properties:
+
+log4j2.properties
+=================        
+
+The `log4j2.properties <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/config/log4j2.properties>`__ file is used to configure Logstash logging. See Logstash's `documentation <https://www.elastic.co/guide/en/logstash/current/logging.html#_log4j_2_configuration>`__ for more info.
+
+
+.. _logstash-patterns:
+
+********
+patterns
+********
+
+The `logstash/patterns <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/patterns>`__  directory contains grok patterns that can be used by Logstash's `grok filter plugin <https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html>`__.
+
+
+.. _logstash-pipeline:
+
+********
+pipeline
+********
+
+The `logstash/pipeline <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/pipeline>`__  directory contains files that define a Logstash pipeline, including inputs, filters, and outputs. See Logstash's `documentation <https://www.elastic.co/guide/en/logstash/current/pipeline.html>`__ for more info.

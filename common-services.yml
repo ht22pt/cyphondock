@@ -25,6 +25,7 @@ services:
       - ../cyphon/entrypoints:/usr/src/app/entrypoints
       - ./config/cyphon/custom:/usr/src/app/cyphon/custom
       - ./config/cyphon/settings:/usr/src/app/cyphon/cyphon/settings
+      - ./config/cyphon/fixtures:/usr/src/app/cyphon/fixtures
 
   cyphon-prod:
     image: dunbar/cyphon:${CYPHON_VER}
@@ -35,10 +36,11 @@ services:
       CYPHON_ENV: PROD
       DJANGO_SETTINGS_MODULE: cyphon.settings.prod
     volumes:
-      - /opt/cyphon/media:/usr/src/app/media
-      - /opt/cyphon/keys:/usr/src/app/keys
+      - ../media:/usr/src/app/media
+      - ../keys:/usr/src/app/keys
       - ./config/cyphon/custom:/usr/src/app/cyphon/custom
       - ./config/cyphon/settings:/usr/src/app/cyphon/cyphon/settings
+      - ./config/cyphon/fixtures:/usr/src/app/cyphon/fixtures
 
   cyphon-test:
     image: dunbar/cyphon:${CYPHON_VER}

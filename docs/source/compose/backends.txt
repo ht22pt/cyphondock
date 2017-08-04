@@ -1,0 +1,65 @@
+.. _backends:
+
+########
+Backends
+########
+
+The `docker-compose.backends.yml <https://github.com/dunbarcyber/cyphondock/blob/master/docker-compose.backends.yml>`__ file can be used to provide the backends needed to run Cyphon outside of a Docker container. This can be useful for local development and testing. To start the backend services::
+
+    $ cd /opt/cyphon/cyphondock
+    $ sudo docker-compose -f docker-compose.backends.yml up
+
+
+.. _backend-postgres:
+
+PostgreSQL
+==========
+
+This service will create a PostgreSQL server using environment settings in the original `config-COPYME/env/cyphon.env <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/env/cyphon.env>`__ file (as opposed to customized settings in the ``config`` directory you may have created for your own use). The server will be accessible on port 5432 of your host machine.
+
+**YAML**::
+
+    postgres:
+      image: mdillon/postgis:${POSTGRES_VER}
+      env_file:
+        - ./config-COPYME/env/cyphon.env
+      ports:
+        - "5432:5432"
+
+
+.. _backend-elasticsearch:
+
+Elasticsearch
+=============
+
+This service will create an Elasticsearch server using Elasticsearch and environment settings in the original `config-COPYME <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME>`__ directory (as opposed to customized settings in the ``config`` directory you may have created for your own use). The server will be accessible on port 9200 of your host machine.
+
+**YAML**::
+
+    elasticsearch:
+      image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VER}
+      env_file:
+        - ./config-COPYME/env/cyphon.env
+      ports:
+        - "9200:9200"
+      volumes:
+        - ./config-COPYME/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+        - ./config-COPYME/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+        - ./config-COPYME/elasticsearch/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:ro
+
+
+.. _backend-mongo:
+
+MongoDB
+=======
+
+This service will create a MongoDB server using the environment settings in the original `config-COPYME/env/cyphon.env <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/env/cyphon.env>`__ file (as opposed to customized settings in the ``config`` directory you may have created for your own use). The server will be accessible on port 27017 of your host machine.
+
+**YAML**::
+
+    mongo:
+      image: mongo:${MONGODB_VER}
+      env_file:
+        - ./config-COPYME/env/cyphon.env
+      ports:
+        - "27017:27017"

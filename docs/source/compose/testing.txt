@@ -1,0 +1,7 @@
+.. _testing:
+
+*******************
+Testing Environment
+*******************
+
+The `docker-compose.travis.yml <https://github.com/dunbarcyber/cyphondock/blob/master/docker-compose.travis.yml>`__ file is used to run tests in `Travis CI <https://travis-ci.org/dunbarcyber/cyphondock/>`__ using the default configs in the `config-COPYME <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME>`__ directory.

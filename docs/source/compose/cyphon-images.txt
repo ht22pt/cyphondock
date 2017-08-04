@@ -1,0 +1,124 @@
+.. _cyphon-images:
+
+#############
+Cyphon Images
+#############
+
+
+.. _dev-image:
+
+*********
+Dev Image
+*********
+
+Builds from custom cyphon.env file
+
++--------------+---------------------------------------------------------------------------------+
+| Image        | local build from ``../cyphon``                                                  |
++--------------+---------------------------------------------------------------------------------+
+| Env File     | :ref:`./config/env/cyphon.env<cyphon-env>`                                      |
++--------------+---------------------------------------------------------------------------------+
+| Environment  | ``CYPHON_ENV: PROD`` ``DJANGO_SETTINGS_MODULE: cyphon.settings.prod``           |
++--------------+---------------------------------------------------------------------------------+
+| Volumes      | :ref:`./config/cyphon/custom<cyphon-custom>`,                                   |
+|              | :ref:`./config/cyphon/settings<cyphon-settings>`,                               |
+|              | :ref:`./config/cyphon/fixtures<cyphon-fixtures>`,                               |
+|              | `cyphon <https://github.com/dunbarcyber/cyphon/tree/master/cyphon>`__,          |
+|              | `entrypoints <https://github.com/dunbarcyber/cyphon/tree/master/entrypoints>`__ |
++--------------+---------------------------------------------------------------------------------+
+
+**YAML**::
+
+    cyphon-dev:
+      build: ../cyphon
+      restart: always
+      env_file:
+        - ./config/env/cyphon.env
+      environment:
+        CYPHON_ENV: DEV
+        DJANGO_SETTINGS_MODULE: cyphon.settings.dev
+      volumes:
+        - ../cyphon/cyphon:/usr/src/app/cyphon
+        - ../cyphon/entrypoints:/usr/src/app/entrypoints
+        - ./config/cyphon/custom:/usr/src/app/cyphon/custom
+        - ./config/cyphon/settings:/usr/src/app/cyphon/cyphon/settings
+
+
+.. _prod-image:
+
+****************
+Production Image
+****************
+
+Builds from custom cyphon.env file
+
++--------------+-----------------------------------------------------------------------+
+| Image        | `dunbar/cyphon <https://hub.docker.com/r/dunbar/cyphon/>`__           |
++--------------+-----------------------------------------------------------------------+
+| Env File     | :ref:`./config/env/cyphon.env<cyphon-env>`                            |
++--------------+-----------------------------------------------------------------------+
+| Environment  | ``CYPHON_ENV: PROD`` ``DJANGO_SETTINGS_MODULE: cyphon.settings.prod`` |
++--------------+-----------------------------------------------------------------------+
+| Volumes      | :ref:`./config-COPYME/cyphon/custom<cyphon-custom>`,                  |
+|              | :ref:`./config-COPYME/cyphon/settings<cyphon-settings>`,              |
+|              | :ref:`./config-COPYME/cyphon/fixtures<cyphon-fixtures>`               |
+|              | ``../media``, ``../keys``                                             |
++--------------+-----------------------------------------------------------------------+
+
+**YAML**::
+
+    cyphon-prod:
+      image: dunbar/cyphon:${CYPHON_VER}
+      restart: always
+      env_file:
+        - ./config/env/cyphon.env
+      environment:
+        CYPHON_ENV: PROD
+        DJANGO_SETTINGS_MODULE: cyphon.settings.prod
+      volumes:
+        - ../media:/usr/src/app/media
+        - ../keys:/usr/src/app/keys
+        - ./config/cyphon/custom:/usr/src/app/cyphon/custom
+        - ./config/cyphon/settings:/usr/src/app/cyphon/cyphon/settings
+        - ./config/cyphon/fixtures:/usr/src/app/cyphon/fixtures
+
+
+.. _test-image:
+
+*************
+Testing Image
+*************
+
+Builds from default cyphon.env file
+
++--------------+-----------------------------------------------------------------------+
+| Image        | `dunbar/cyphon <https://hub.docker.com/r/dunbar/cyphon/>`__           |
++--------------+-----------------------------------------------------------------------+
+| Env File     | :ref:`./config-COPYME/env/cyphon.env<cyphon-env>`                     |
++--------------+-----------------------------------------------------------------------+
+| Environment  | ``CYPHON_ENV: PROD`` ``DJANGO_SETTINGS_MODULE: cyphon.settings.prod`` |
++--------------+-----------------------------------------------------------------------+
+| Volumes      | :ref:`./config-COPYME/cyphon/custom<cyphon-custom>`,                  |
+|              | :ref:`./config-COPYME/cyphon/settings<cyphon-settings>`,              |
+|              | :ref:`./config-COPYME/cyphon/fixtures<cyphon-fixtures>`               |
++--------------+-----------------------------------------------------------------------+
+
+**YAML**::
+
+    cyphon-test:
+      image: dunbar/cyphon:${CYPHON_VER}
+      env_file:
+        - ./config-COPYME/env/cyphon.env
+      environment:
+        CYPHON_ENV: PROD
+        DJANGO_SETTINGS_MODULE: cyphon.settings.prod
+        DJANGO_LIVE_TEST_SERVER_ADDRESS: cyphon:8081-8100
+        FUNCTIONAL_TESTS_ENABLED: ${FUNCTIONAL_TESTS_ENABLED}
+        FUNCTIONAL_TESTS_DRIVER: docker
+        FUNCTIONAL_TESTS_HOST: selenium
+        FUNCTIONAL_TESTS_PORT: 4444
+        FUNCTIONAL_TESTS_BROWSER: chrome
+      volumes:
+        - ./config-COPYME/cyphon/custom:/usr/src/app/cyphon/custom
+        - ./config-COPYME/cyphon/settings:/usr/src/app/cyphon/cyphon/settings
+        - ./config-COPYME/cyphon/fixtures:/usr/src/app/cyphon/fixtures

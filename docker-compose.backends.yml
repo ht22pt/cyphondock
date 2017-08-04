@@ -12,6 +12,10 @@ services:
       - ./config-COPYME/env/cyphon.env
     ports:
       - "9200:9200"
+    volumes:
+      - ./config-COPYME/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./config-COPYME/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+      - ./config-COPYME/elasticsearch/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:ro
 
   mongo:
     image: mongo:${MONGODB_VER}

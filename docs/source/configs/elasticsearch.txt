@@ -1,0 +1,33 @@
+.. _elasticsearch-configs:
+
+############################
+Elasticsearch Configurations
+############################
+
+.. _elasticsearch.yml:
+
+*****************
+elasticsearch.yml
+*****************
+
+The `elasticsearch.yml <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/elasticsearch/elasticsearch.yml>`__ file contains Elasticsearch configuration flags. See Elasticsearch's `documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html>`__ for more info.
+
+If you don't have `X-Pack <https://www.elastic.co/guide/en/x-pack/index.html>`__, be sure to include the setting ``xpack.security.enabled: false``. See Elastic's `documentation <https://www.elastic.co/guide/en/x-pack/5.5/installing-xpack.html#xpack-enabling>`__ for more info.
+
+
+.. _es-jvm.options:
+
+***********
+jvm.options
+***********
+
+The `jvm.options <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/elasticsearch/jvm.options>`__ file is used to set JVM heap size. See Elasticsearch's `documentation <https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html>`__ for more info.
+
+
+.. _es-log4j2.properties:
+
+*****************
+log4j2.properties
+*****************        
+
+The `log4j2.properties <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/elasticsearch/log4j2.properties>`__ file is used to configure Elasticsearch logging. See Elasticsearch's `documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html#logging>`__ for more info.

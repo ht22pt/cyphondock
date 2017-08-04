@@ -1,0 +1,151 @@
+.. _production:
+
+######################
+Production Environment
+######################
+
+The production environment uses a Cyphon image on Docker Hub as the
+basis for its Cyphon container.
+
+Settings for the production environment are contained in the 
+`docker-compose.override.yml`_ file. Docker Compose automatically reads  
+both the `docker-compose.yml`_ and `docker-compose.override.yml`_ 
+files when it builds an environment, unless other files are specified. 
+So in this case, Docker will deploy the production environment by default.
+
+To start up the (default) production environment::
+
+    $ cd /opt/cyphon/cyphondock
+    $ sudo docker-compose up -d
+
+
+.. _prod-superuser:
+
+*********
+Superuser
+*********
+
+To create a superuser for the production environment, enter the shell of the Django container::
+
+    $ sudo docker exec -it cyphondock_cyphon_1 /bin/sh
+
+Then create the superuser::
+
+    $ python manage.py createsuperuser
+
+You can use this user to log in to Cyphon and create other user accounts.
+
+
+.. _prod-ports:
+
+*****
+Ports
+*****
+
+The production environment will map the exposed ports in the containers 
+to same ports on the host machine. This makes it straightforward to use 
+the endpoints of the various services.
+
+You can access Cyphon and some of its related services through your web 
+browser. The following services can be accessed by visiting your host 
+domain on the appropriate port (e.g., ``http://example.com:5601``):
+
+===================  =====
+Service              Port
+===================  =====
+Cyphon               80
+Kibana               5601
+RabbitMQ management  15672
+===================  =====
+
+
+.. _prod-volumes:
+
+************
+Data Volumes
+************
+
+The production environment uses the subdirectories in ``/opt/cyphon/data``
+as data volumes for PostgreSQL, Elasticsearch, or MongoDB. This makes
+the data from those services easy to locate and backup.
+
+
+.. _prod-overrides:
+
+*******************
+Container Overrides
+*******************
+
+
+.. _prod-postgres:
+
+PostgreSQL
+==========
+
+This override for the :ref:`base PostgreSQl service<postgres-service>` will store data in the ``./data/postgresql`` directory on the host machine.
+
+**YAML**::
+
+    postgres:
+      volumes:
+        - ../data/postgresql:/var/lib/postgresql/data
+
+
+.. _prod-nginx:
+
+Nginx
+=====
+
+This override for the :ref:`base Nginx service<nginx-service>` will map the ports used by :ref:`cyphon-service`, :ref:`kibana-service`, and :ref:`rabbit-service` to the same ports on the host machine.
+
+**YAML**::
+
+    nginx:
+      ports:
+        - "80:80"        # Cyphon
+        - "443:443"      # Cyphon
+        - "5601:5601"    # Kibana
+        - "15672:15672"  # RabbitMQ management plugin
+
+
+.. _prod-elasticsearch:
+
+Elasticsearch
+=============
+
+This override for the :ref:`base Elasticsearch service<elasticsearch-service>` will store data in the ``./data/elasticsearch`` directory on the host machine.
+
+**YAML**::
+
+    elasticsearch:
+      volumes:
+        - ../data/elasticsearch:/usr/share/elasticsearch/data
+
+
+.. _prod-logstash:
+
+Logstash
+========
+
+This override for the :ref:`base Logstash service<logstash-service>` will allow Logstash to listen on ports 5044-5045 of the host machine.
+
+**YAML**::
+
+    logstash:
+      ports:
+        - "5044:5044"
+        - "5045:5045"  # you can configure Filebeat to send Nessus files here
+
+
+.. _prod-mongodb:
+
+MongoDB
+=======
+
+This override for the :ref:`base MongoDB service<mongo-service>` will store data in the ``./data/mongodb`` directory on the host machine.
+
+**YAML**::
+
+    # mongo:
+    #   volumes:
+    #     - ../data/mongodb:/data/db

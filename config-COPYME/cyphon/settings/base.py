@@ -30,6 +30,7 @@ REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
 
 ALLOWED_HOSTS = HOST_SETTINGS['ALLOWED_HOSTS']
 CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
+LOGIN_REDIRECT_URL = '/app/'
 
 DATABASES = {
     'default': {
@@ -164,6 +165,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'cyphon.version.VersionMiddleware',
 )
 
 ROOT_URLCONF = 'cyphon.urls'
@@ -212,13 +214,14 @@ PASSWORD_RESET_TIMEOUT_DAYS = 3
 PASSWORD_MIN_LENGTH = 6
 PASSWORD_MAX_LENGTH = 30
 
-# This section is for sending email to users. This example is a gmail account.
-EMAIL_NAME = EMAIL['NAME']
-EMAIL_HOST = EMAIL['HOST']
-EMAIL_HOST_USER = EMAIL['HOST_USER']
-EMAIL_HOST_PASSWORD = EMAIL['HOST_PASSWORD']
-EMAIL_PORT = EMAIL['PORT']
-EMAIL_USE_TLS = EMAIL['USE_TLS']
+# This section is for sending email to users.
+EMAIL_HOST = EMAIL.get('HOST', 'localhost')
+EMAIL_HOST_USER = EMAIL.get('HOST_USER', '')
+EMAIL_HOST_PASSWORD = EMAIL.get('HOST_PASSWORD', '')
+EMAIL_PORT = EMAIL.get('PORT', 25)
+EMAIL_SUBJECT_PREFIX = EMAIL.get('SUBJECT_PREFIX', '[Cyphon] ')
+EMAIL_USE_TLS = EMAIL.get('USE_TLS', True)
+DEFAULT_FROM_EMAIL = EMAIL.get('DEFAULT_FROM', 'webmaster@localhost')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

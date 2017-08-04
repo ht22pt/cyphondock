@@ -1,0 +1,13 @@
+.. _filebeat-configs:
+
+#######################
+Filebeat Configurations
+#######################
+
+.. _filebeat.yml:
+
+************
+filebeat.yml
+************
+
+This `filebeat.yml <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/beats/filebeat/filebeat.yml>`__ file contains example Filebeat configurations for sending logs to Logstash. See Filebeat's documentation for `configuring Filebeat <https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-configuration.html>`__ and available `configuration options <https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-configuration-details.html>`__.
