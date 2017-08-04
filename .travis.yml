@@ -8,18 +8,15 @@ services:
 python:
   - 3.6
 
+# addons:
+#   sauce_connect: true
+
 before_script:
-  - docker-compose -f docker-compose.travis.yml up --build -d 
+  - docker-compose -f docker-compose.travis.yml up --build -d
   - docker ps -a
   - sleep 30  # wait for PostgreSQl and Elasticsearch to start
 
-script:
-  - docker exec cyphondock_cyphon_1 rm -f __init__.py
-  - docker exec cyphondock_cyphon_1 python manage.py migrate contenttypes
-  # Make sure starter fixtures can load successfully and all tests pass.
-  # Run tests with --keepdb to avoid OperationalError during teardown, in case
-  # any db connections are still open from threads in TransactionTestCases.
-  - docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json && docker exec cyphondock_cyphon_1 python manage.py test --noinput --keepdb -v 2
+script: ./scripts/runtests.sh
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down

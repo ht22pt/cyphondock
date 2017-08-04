@@ -1,6 +1,6 @@
 # Defines development and production services for Cyphon Engine.
 # Expects a config directory to contain customized versions of:
-# 
+#
 #   - base.py
 #   - conf.py
 #   - dev.py

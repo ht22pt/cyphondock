@@ -41,10 +41,21 @@ services:
       file: common-services.yml
       service: cyphon-test
     environment:
-      CYPHON_SUPERUSER: "YES"
+      - CYPHON_SUPERUSER=YES
+      - FUNCTIONAL_TESTS_DRIVER=docker
+      - SAUCE_USERNAME
+      - SAUCE_ACCESS_KEY
+      - TRAVIS_JOB_NUMBER
+      - TRAVIS_BUILD_NUMBER
+      - TRAVIS_PYTHON_VERSION
+      - TWITTER_ACCESS_TOKEN
+      - TWITTER_KEY
+      - TWITTER_SECRET
+      - TWITTER_TOKEN_SECRET
     volumes_from:
       - geoip
     links:
+      # - saucelabs
       - elasticsearch
       - geoip
       - mongo
@@ -57,6 +68,8 @@ services:
       - postgres
     volumes:
       - ./config-COPYME/cyphon/fixtures:/usr/src/app/cyphon/fixtures:ro
+    ports:
+      - "8001:8001"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VER}
@@ -106,7 +119,7 @@ services:
     ports:
       - "5044:5044"
       - "5045:5045"
-      - "elasticsearch:9200:9200"
+      - "9200:9200"
     volumes:
       - ./config-COPYME/logstash/pipeline:/etc/logstash/conf.d:ro
       - ./config-COPYME/logstash/config:/usr/share/logstash/config:ro
@@ -154,6 +167,8 @@ services:
     restart: always
     env_file:
       - ./config-COPYME/env/cyphon.env
+    ports:
+      - "5433:5432"
 
   logchutes:
     extends:
@@ -205,3 +220,10 @@ services:
 
   selenium:
     image: selenium/standalone-chrome:${SELENIUM_VER}
+    ports:
+      - "4444:4444"
+
+# networks:
+#   default:
+#     external:
+#       name: bridge

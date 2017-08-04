@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/cyphondock
+    # docker:
+    #   - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -x
+            sudo curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose
+      # - setup_remote_docker
+      - run:
+          name: Build Docker containers
+          command: |
+            set -x
+            docker-compose -f docker-compose.travis.yml \
+            up --build -d
+      - run:
+          name: Wait for containers to boot up
+          command: sleep 30
+      - run:
+          name: Run tests
+          command: ./scripts/runtests.sh
